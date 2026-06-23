@@ -63,6 +63,12 @@ export default function Analytics() {
             <ChartCard title="CFMM liquidity" subtitle="total value in the pool (tez)">
               <SeriesChart data={data} dataKey="tvl" color="#2bdcab" name="Liquidity" unit="ꜩ" dp={0} area />
             </ChartCard>
+            <ChartCard title="Total ctez supply" subtitle="ctez in circulation">
+              <SeriesChart data={data} dataKey="supply" color="#4ee4b7" name="Supply" unit="ctez" dp={0} area />
+            </ChartCard>
+            <ChartCard title="Ovens created" subtitle="cumulative oven count">
+              <SeriesChart data={data} dataKey="ovenCount" color="#2a7cf6" name="Ovens" dp={0} />
+            </ChartCard>
           </SimpleGrid>
         </VStack>
       )}
