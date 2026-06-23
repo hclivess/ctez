@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import Ovens from './pages/Ovens';
 import Liquidations from './pages/Liquidations';
 import Trade from './pages/Trade';
+import Analytics from './pages/Analytics';
 import Faq from './pages/Faq';
 
 export default function App() {
@@ -14,6 +15,7 @@ export default function App() {
         <Route path="/ovens" element={<Ovens />} />
         <Route path="/liquidations" element={<Liquidations />} />
         <Route path="/trade" element={<Trade />} />
+        <Route path="/analytics" element={<Analytics />} />
         <Route path="/faq" element={<Faq />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

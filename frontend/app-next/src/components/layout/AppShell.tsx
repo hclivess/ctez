@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { type ReactNode } from 'react';
 import { NavLink as RouterNavLink } from 'react-router-dom';
-import { FiGrid, FiLayers, FiRepeat, FiHelpCircle, FiMenu, FiZap } from 'react-icons/fi';
+import { FiGrid, FiLayers, FiRepeat, FiHelpCircle, FiMenu, FiZap, FiBarChart2 } from 'react-icons/fi';
 import Logo from '../brand/Logo';
 import ConnectButton from './ConnectButton';
 import { useWallet } from '../../wallet/WalletProvider';
@@ -25,6 +25,7 @@ const NAV = [
   { to: '/ovens', label: 'Ovens', icon: FiLayers, end: false },
   { to: '/liquidations', label: 'Liquidations', icon: FiZap, end: false },
   { to: '/trade', label: 'Trade', icon: FiRepeat, end: false },
+  { to: '/analytics', label: 'Analytics', icon: FiBarChart2, end: false },
   { to: '/faq', label: 'FAQ', icon: FiHelpCircle, end: false },
 ];
 

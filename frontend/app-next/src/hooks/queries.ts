@@ -4,6 +4,7 @@ import { getUserBalance } from '../api/user';
 import { getAllOvens, getUserOvens, getCtezStorage } from '../contracts/ctez';
 import { getCfmmStorage } from '../contracts/cfmm';
 import { getDelegates, getOvenBakerInfo } from '../api/tzkt';
+import { getCtezHistory } from '../api/history';
 import { ensureContracts } from '../lib/init';
 
 const withContracts = <T>(fn: () => Promise<T>) => async (): Promise<T> => {
@@ -55,6 +56,13 @@ export const useUserLQT = (pkh?: string) =>
 
 export const useDelegates = () =>
   useQuery({ queryKey: ['delegates'], queryFn: () => getDelegates(), staleTime: 5 * 60_000 });
+
+export const useCtezHistory = (days: number) =>
+  useQuery({
+    queryKey: ['ctezHistory', days],
+    queryFn: () => getCtezHistory(days),
+    staleTime: 10 * 60_000,
+  });
 
 export const useOvenBaker = (ovenAddress?: string, owner?: string) =>
   useQuery({
