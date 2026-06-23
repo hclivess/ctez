@@ -66,3 +66,45 @@ export const getOvenByAddressAPI = async (ovenAddress: string): Promise<AllOvenD
   );
   return data?.[0];
 };
+
+export interface OvenBakerInfo {
+  delegate: { address: string; alias?: string; active: boolean } | null;
+  delegationTime?: string;
+  lastReward: { timestamp: string; amount: number } | null; // amount in tez
+  rewardCount30d: number;
+}
+
+/**
+ * Whether an oven is delegated and actually being paid. "Rewards" are detected
+ * as incoming tez transfers from anyone other than the owner / the oven itself /
+ * the ctez contract — i.e. baker payouts (which often come from a separate
+ * payout address, so we don't filter to the delegate address).
+ */
+export const getOvenBakerInfo = async (
+  ovenAddress: string,
+  owner: string,
+): Promise<OvenBakerInfo> => {
+  const account = await get<any, unknown>(`accounts/${ovenAddress}`);
+  const d = account?.delegate;
+  const delegate = d ? { address: d.address, alias: d.alias, active: !!d.active } : null;
+
+  let lastReward: { timestamp: string; amount: number } | null = null;
+  let rewardCount30d = 0;
+
+  if (delegate) {
+    const since = Date.now() - 30 * 24 * 3600 * 1000;
+    const txs = await get<any[], unknown>(
+      `operations/transactions?target=${ovenAddress}&amount.gt=0&sort.desc=level&limit=50`,
+    );
+    const rewards = (txs || []).filter((t) => {
+      const s = t?.sender?.address;
+      return s && s !== owner && s !== ovenAddress && s !== CTEZ_ADDRESS;
+    });
+    rewardCount30d = rewards.filter((t) => new Date(t.timestamp).getTime() >= since).length;
+    if (rewards[0]) {
+      lastReward = { timestamp: rewards[0].timestamp, amount: Number(rewards[0].amount) / 1e6 };
+    }
+  }
+
+  return { delegate, delegationTime: account?.delegationTime, lastReward, rewardCount30d };
+};

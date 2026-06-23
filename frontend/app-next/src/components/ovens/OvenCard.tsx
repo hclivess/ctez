@@ -17,6 +17,7 @@ import { computeOvenMetrics, ovenHealth } from '../../lib/oven';
 import { type MarketContext } from '../../lib/market';
 import { fmt } from '../../lib/format';
 import { GlassCard, AddressChip, Pill, LabelWithInfo } from '../ui';
+import BakerStatus from './BakerStatus';
 import type { OvenAction } from './OvenActionModal';
 
 function Metric({
@@ -128,6 +129,8 @@ export default function OvenCard({
           info="If the target price rises to this level (it drifts upward over time), this oven becomes liquidatable at its current collateral and debt. The bigger the gap above the current target, the safer."
         />
       </SimpleGrid>
+
+      <BakerStatus ovenAddress={oven.value.address} owner={oven.key.owner} />
 
       <Box mb={4}>
         <HStack justify="space-between" mb={1.5}>

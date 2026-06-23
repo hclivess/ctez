@@ -3,7 +3,7 @@ import { getBaseStats, getUserLQTData } from '../api/contracts';
 import { getUserBalance } from '../api/user';
 import { getAllOvens, getUserOvens, getCtezStorage } from '../contracts/ctez';
 import { getCfmmStorage } from '../contracts/cfmm';
-import { getDelegates } from '../api/tzkt';
+import { getDelegates, getOvenBakerInfo } from '../api/tzkt';
 import { ensureContracts } from '../lib/init';
 
 const withContracts = <T>(fn: () => Promise<T>) => async (): Promise<T> => {
@@ -55,3 +55,11 @@ export const useUserLQT = (pkh?: string) =>
 
 export const useDelegates = () =>
   useQuery({ queryKey: ['delegates'], queryFn: () => getDelegates(), staleTime: 5 * 60_000 });
+
+export const useOvenBaker = (ovenAddress?: string, owner?: string) =>
+  useQuery({
+    queryKey: ['ovenBaker', ovenAddress],
+    queryFn: () => getOvenBakerInfo(ovenAddress as string, owner as string),
+    enabled: !!ovenAddress && !!owner,
+    staleTime: 5 * 60_000,
+  });
