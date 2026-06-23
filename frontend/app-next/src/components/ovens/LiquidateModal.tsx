@@ -17,7 +17,8 @@ import {
 import { AllOvenDatum } from '../../interfaces';
 import { liquidate } from '../../contracts/ctez';
 import { useWallet } from '../../wallet/WalletProvider';
-import { useUserBalance } from '../../hooks/queries';
+import { useUserBalance, useBaseStats } from '../../hooks/queries';
+import { liquidationProfit } from '../../lib/market';
 import { computeOvenMetrics, ovenHealth } from '../../lib/oven';
 import { useTx } from '../../lib/tx';
 import { AmountInput } from '../ui';
@@ -38,6 +39,8 @@ export default function LiquidateModal({
 }) {
   const { pkh } = useWallet();
   const { data: balance } = useUserBalance(pkh);
+  const { data: stats } = useBaseStats();
+  const marketPrice = Number(stats?.currentPrice ?? 0);
   const runTx = useTx();
   const [amount, setAmount] = useState('');
   const [busy, setBusy] = useState(false);
@@ -131,21 +134,39 @@ export default function LiquidateModal({
             </Box>
 
             {amt > 0 && (
-              <HStack
-                justify="space-between"
+              <VStack
+                align="stretch"
+                spacing={2}
                 bg="rgba(43,220,171,0.08)"
                 border="1px solid rgba(43,220,171,0.20)"
                 borderRadius="xl"
                 px={4}
                 py={3}
               >
-                <Text fontSize="sm" color="whiteAlpha.700">
-                  You receive
-                </Text>
-                <Text fontWeight={700} color="brand.300">
-                  ≈ {fmt(reward, 6)} tez
-                </Text>
-              </HStack>
+                <HStack justify="space-between">
+                  <Text fontSize="sm" color="whiteAlpha.700">
+                    You receive
+                  </Text>
+                  <Text fontWeight={700} color="brand.300">
+                    ≈ {fmt(reward, 6)} tez
+                  </Text>
+                </HStack>
+                {marketPrice > 0 && (
+                  <HStack justify="space-between">
+                    <Text fontSize="xs" color="whiteAlpha.500">
+                      Net if you buy the ctez at market
+                    </Text>
+                    <Text
+                      fontSize="sm"
+                      fontWeight={700}
+                      color={liquidationProfit(amt, m.currentTarget, marketPrice) >= 0 ? 'brand.300' : 'orange.300'}
+                    >
+                      {liquidationProfit(amt, m.currentTarget, marketPrice) >= 0 ? '+' : '−'}
+                      {fmt(Math.abs(liquidationProfit(amt, m.currentTarget, marketPrice)), 4)} tez
+                    </Text>
+                  </HStack>
+                )}
+              </VStack>
             )}
           </VStack>
         </ModalBody>

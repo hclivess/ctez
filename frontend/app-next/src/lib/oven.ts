@@ -62,8 +62,8 @@ export function ovenHealth(collateralRatioPct: number): {
   color: string;
 } {
   if (!Number.isFinite(collateralRatioPct)) return { label: 'No debt', color: 'gray.400' };
-  if (collateralRatioPct >= 200) return { label: 'Healthy', color: 'brand.300' };
-  if (collateralRatioPct >= 140) return { label: 'Moderate', color: 'yellow.300' };
+  if (collateralRatioPct >= 200) return { label: 'Safe', color: 'brand.300' };
+  if (collateralRatioPct >= 140) return { label: 'Watch', color: 'yellow.300' };
   if (collateralRatioPct >= 115) return { label: 'Risky', color: 'orange.300' };
   return { label: 'Critical', color: 'red.400' };
 }

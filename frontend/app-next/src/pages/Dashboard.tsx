@@ -5,6 +5,7 @@ import { useWallet } from '../wallet/WalletProvider';
 import { useBaseStats, useUserBalance, useUserOvens } from '../hooks/queries';
 import { GlassCard, Loading, PageHeader, StatCard } from '../components/ui';
 import ConnectButton from '../components/layout/ConnectButton';
+import MarketContextBanner from '../components/market/MarketContextBanner';
 import { fmt, fmtCompact } from '../lib/format';
 
 function Hero() {
@@ -125,6 +126,8 @@ export default function Dashboard() {
               info="Total value locked in the tez/ctez trading pool, counted as twice the tez side. Low liquidity means swaps move the price more."
             />
           </SimpleGrid>
+
+          <MarketContextBanner />
 
           <Position />
         </VStack>

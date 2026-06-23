@@ -14,6 +14,7 @@ import {
 import { FiAlertTriangle } from 'react-icons/fi';
 import { AllOvenDatum } from '../../interfaces';
 import { computeOvenMetrics, ovenHealth } from '../../lib/oven';
+import { type MarketContext } from '../../lib/market';
 import { fmt } from '../../lib/format';
 import { GlassCard, AddressChip, Pill, LabelWithInfo } from '../ui';
 import type { OvenAction } from './OvenActionModal';
@@ -48,14 +49,17 @@ export default function OvenCard({
   oven,
   rawTarget,
   rawDrift,
+  market,
   onAction,
 }: {
   oven: AllOvenDatum;
   rawTarget: number;
   rawDrift: number;
+  market: MarketContext;
   onAction: (oven: AllOvenDatum, action: OvenAction) => void;
 }) {
   const m = computeOvenMetrics(oven.value.tez_balance, oven.value.ctez_outstanding, rawTarget, rawDrift);
+  const repayAllCost = m.ctezOutstanding * market.marketPrice;
   const health = ovenHealth(m.collateralRatioPct);
   const ratioStr = Number.isFinite(m.collateralRatioPct) ? `${fmt(m.collateralRatioPct, 1)}%` : '∞';
 
@@ -152,6 +156,31 @@ export default function OvenCard({
           }}
         />
       </Box>
+
+      {m.ctezOutstanding > 0 && (
+        <HStack
+          justify="space-between"
+          mb={4}
+          px={3}
+          py={2}
+          borderRadius="lg"
+          bg="whiteAlpha.50"
+          fontSize="xs"
+        >
+          <LabelWithInfo
+            label="Repay all"
+            info="Approx. tez to buy back and burn your entire ctez debt at the current market price (ignores swap slippage). It's cheap when ctez trades below its target peg."
+            color="whiteAlpha.500"
+            fontSize="xs"
+          />
+          <Text fontWeight={600}>
+            ≈ {fmt(repayAllCost, 4)} tez{' '}
+            <Box as="span" color={market.repayFavored ? 'brand.300' : 'whiteAlpha.500'} fontWeight={700}>
+              {market.repayFavored ? '· cheap now' : '· pricey now'}
+            </Box>
+          </Text>
+        </HStack>
+      )}
 
       <Divider borderColor="whiteAlpha.100" mb={4} />
 
