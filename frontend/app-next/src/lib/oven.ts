@@ -50,6 +50,12 @@ export function computeOvenMetrics(
   };
 }
 
+/** Liquidation threshold: an oven is liquidatable below ~106.67% (16/15). */
+export const LIQUIDATION_RATIO_PCT = (16 / 15) * 100;
+
+export const isLiquidatable = (m: OvenMetrics): boolean =>
+  m.ctezOutstanding > 0 && m.collateralRatioPct < LIQUIDATION_RATIO_PCT;
+
 /** UI risk bucket from collateral ratio (liquidation threshold ≈ 106.67%). */
 export function ovenHealth(collateralRatioPct: number): {
   label: string;

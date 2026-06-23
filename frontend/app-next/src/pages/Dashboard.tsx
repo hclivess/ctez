@@ -94,12 +94,14 @@ export default function Dashboard() {
               value={fmt(stats.currentTarget, 6)}
               sub="tez per ctez"
               icon={<FiTarget />}
+              info="The protocol's internal peg — how many tez one ctez is meant to be worth. It starts at 1.0 and drifts over time to reflect accrued baking rewards. Your oven's debt is valued at this price."
             />
             <StatCard
               label="Market price"
               value={fmt(stats.currentPrice, 6)}
               sub="CFMM tez per ctez"
               icon={<FiActivity />}
+              info="The live price of ctez on the CFMM (the tez ⇄ ctez AMM pool). When it drifts away from the target, the protocol adjusts the drift to nudge it back toward the peg."
             />
             <StatCard
               label="Premium"
@@ -107,17 +109,20 @@ export default function Dashboard() {
               sub="market vs target"
               accent={premium >= 0 ? 'brand.300' : 'orange.300'}
               icon={<FiTrendingUp />}
+              info="How far the market price sits above (+) or below (−) the target. Positive means ctez trades richer than its peg; negative means cheaper."
             />
             <StatCard
               label="Annual drift"
               value={`${Number(stats.currentAnnualDrift) >= 0 ? '+' : ''}${fmt(stats.currentAnnualDrift, 2)}%`}
               sub="current annualised"
+              info="The current annualised rate at which the target is moving. Negative drift lowers the target (ctez is above peg); positive drift raises it (ctez is below peg), pushing ovens toward minting or liquidation."
             />
             <StatCard
               label="CFMM liquidity"
               value={`${fmtCompact(stats.totalLiquidity)} ꜩ`}
               sub="total value"
               icon={<FiDroplet />}
+              info="Total value locked in the tez/ctez trading pool, counted as twice the tez side. Low liquidity means swaps move the price more."
             />
           </SimpleGrid>
 

@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { type ReactNode } from 'react';
 import { NavLink as RouterNavLink } from 'react-router-dom';
-import { FiGrid, FiLayers, FiRepeat, FiHelpCircle, FiMenu, FiExternalLink } from 'react-icons/fi';
+import { FiGrid, FiLayers, FiRepeat, FiHelpCircle, FiMenu, FiZap } from 'react-icons/fi';
 import Logo from '../brand/Logo';
 import ConnectButton from './ConnectButton';
 import { useWallet } from '../../wallet/WalletProvider';
@@ -23,6 +23,7 @@ import { useWallet } from '../../wallet/WalletProvider';
 const NAV = [
   { to: '/', label: 'Dashboard', icon: FiGrid, end: true },
   { to: '/ovens', label: 'Ovens', icon: FiLayers, end: false },
+  { to: '/liquidations', label: 'Liquidations', icon: FiZap, end: false },
   { to: '/trade', label: 'Trade', icon: FiRepeat, end: false },
   { to: '/faq', label: 'FAQ', icon: FiHelpCircle, end: false },
 ];
@@ -83,19 +84,18 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             </Text>
           </HStack>
         </HStack>
-        <Link
-          href="https://ctez.app"
-          isExternal
-          px={4}
-          fontSize="xs"
-          color="whiteAlpha.500"
-          _hover={{ color: 'whiteAlpha.800' }}
-        >
-          <HStack spacing={1.5}>
-            <Text>About ctez</Text>
-            <Icon as={FiExternalLink} />
+        <RouterNavLink to="/faq" onClick={onNavigate}>
+          <HStack
+            spacing={1.5}
+            px={4}
+            fontSize="xs"
+            color="whiteAlpha.500"
+            _hover={{ color: 'whiteAlpha.800' }}
+          >
+            <Icon as={FiHelpCircle} />
+            <Text>How ctez works</Text>
           </HStack>
-        </Link>
+        </RouterNavLink>
       </VStack>
     </Flex>
   );

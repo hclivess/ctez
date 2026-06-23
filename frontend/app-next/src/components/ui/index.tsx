@@ -17,7 +17,7 @@ import {
   type InputProps,
 } from '@chakra-ui/react';
 import { type ReactNode } from 'react';
-import { FiCheck, FiCopy } from 'react-icons/fi';
+import { FiCheck, FiCopy, FiInfo } from 'react-icons/fi';
 import { glassStyle } from '../../theme';
 import { shortenAddress } from '../../lib/format';
 
@@ -38,25 +38,59 @@ export function GlassCard({ children, ...props }: BoxProps & { children: ReactNo
   );
 }
 
+export function LabelWithInfo({
+  label,
+  info,
+  color = 'whiteAlpha.600',
+  fontSize = 'sm',
+}: {
+  label: string;
+  info?: string;
+  color?: string;
+  fontSize?: string;
+}) {
+  return (
+    <HStack spacing={1.5} align="center">
+      <Text fontSize={fontSize} color={color} fontWeight={500}>
+        {label}
+      </Text>
+      {info && (
+        <Tooltip label={info} placement="top" hasArrow maxW="280px">
+          <Box
+            as="span"
+            color="whiteAlpha.400"
+            _hover={{ color: 'whiteAlpha.700' }}
+            cursor="help"
+            display="inline-flex"
+            aria-label={`About ${label}`}
+          >
+            <FiInfo size={13} />
+          </Box>
+        </Tooltip>
+      )}
+    </HStack>
+  );
+}
+
 export function StatCard({
   label,
   value,
   sub,
   accent = 'whiteAlpha.900',
   icon,
+  info,
 }: {
   label: string;
   value: ReactNode;
   sub?: ReactNode;
   accent?: string;
   icon?: ReactNode;
+  info?: string;
 }) {
   return (
     <GlassCard p={5}>
       <HStack justify="space-between" align="start">
-        <Text fontSize="sm" color="whiteAlpha.600" fontWeight={500}>
-          {label}
-        </Text>
+        <LabelWithInfo label={label} info={info} />
         {icon && <Box color="brand.300">{icon}</Box>}
       </HStack>
       <Text mt={2} fontSize="2xl" fontWeight={700} color={accent} lineHeight={1.1}>

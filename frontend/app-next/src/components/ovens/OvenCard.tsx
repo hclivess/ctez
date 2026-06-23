@@ -7,6 +7,7 @@ import {
   Progress,
   SimpleGrid,
   Text,
+  Tooltip,
   VStack,
   Wrap,
 } from '@chakra-ui/react';
@@ -14,15 +15,23 @@ import { FiAlertTriangle } from 'react-icons/fi';
 import { AllOvenDatum } from '../../interfaces';
 import { computeOvenMetrics, ovenHealth } from '../../lib/oven';
 import { fmt } from '../../lib/format';
-import { GlassCard, AddressChip, Pill } from '../ui';
+import { GlassCard, AddressChip, Pill, LabelWithInfo } from '../ui';
 import type { OvenAction } from './OvenActionModal';
 
-function Metric({ label, value, sub }: { label: string; value: string; sub?: string }) {
+function Metric({
+  label,
+  value,
+  sub,
+  info,
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+  info?: string;
+}) {
   return (
     <Box>
-      <Text fontSize="xs" color="whiteAlpha.500">
-        {label}
-      </Text>
+      <LabelWithInfo label={label} info={info} color="whiteAlpha.500" fontSize="xs" />
       <Text fontWeight={700} fontSize="md">
         {value}
       </Text>
@@ -79,28 +88,51 @@ export default function OvenCard({
             {m.atRisk && <Box as={FiAlertTriangle} display="inline" mr={1} mb="-2px" />}
             {health.label}
           </Pill>
-          <Text fontSize="xs" color="whiteAlpha.500">
-            ratio {ratioStr}
-          </Text>
+          <Tooltip
+            label="Collateral ratio = tez collateral ÷ debt valued at the target price. Liquidation happens below ~106.67%. Higher is safer."
+            placement="top"
+            hasArrow
+            maxW="280px"
+          >
+            <Text fontSize="xs" color="whiteAlpha.500" cursor="help">
+              ratio {ratioStr}
+            </Text>
+          </Tooltip>
         </VStack>
       </Flex>
 
       <SimpleGrid columns={2} spacingY={4} spacingX={3} mb={4}>
-        <Metric label="Collateral" value={`${fmt(m.tez, 4)} tez`} />
-        <Metric label="Outstanding" value={`${fmt(m.ctezOutstanding, 4)} ctez`} />
-        <Metric label="Mintable headroom" value={`${fmt(m.remainingMintable, 4)} ctez`} />
+        <Metric
+          label="Collateral"
+          value={`${fmt(m.tez, 4)} tez`}
+          info="The tez locked in this oven, backing your ctez debt."
+        />
+        <Metric
+          label="Outstanding"
+          value={`${fmt(m.ctezOutstanding, 4)} ctez`}
+          info="The ctez you've minted from this oven — your debt. Repay (burn) it to free up collateral."
+        />
+        <Metric
+          label="Mintable headroom"
+          value={`${fmt(m.remainingMintable, 4)} ctez`}
+          info="Additional ctez you can still mint against this collateral before hitting the limit."
+        />
         <Metric
           label="Liquidation target"
           value={Number.isFinite(m.liquidationTarget) ? fmt(m.liquidationTarget, 6) : '—'}
           sub={`current ${fmt(m.currentTarget, 6)} tez/ctez`}
+          info="If the target price rises to this level (it drifts upward over time), this oven becomes liquidatable at its current collateral and debt. The bigger the gap above the current target, the safer."
         />
       </SimpleGrid>
 
       <Box mb={4}>
         <HStack justify="space-between" mb={1.5}>
-          <Text fontSize="xs" color="whiteAlpha.500">
-            Mint utilization
-          </Text>
+          <LabelWithInfo
+            label="Mint utilization"
+            info="How much of your maximum mintable ctez you've already used. Above ~85% you're close to the limit and at higher liquidation risk."
+            color="whiteAlpha.500"
+            fontSize="xs"
+          />
           <Text fontSize="xs" color="whiteAlpha.600">
             {fmt(m.utilizationPct, 0)}%
           </Text>
